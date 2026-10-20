@@ -43,7 +43,7 @@ if [ -n "$ASAN" ]; then
     # The patch made to LLVM upstream (i.e aliasing -static-libsan to -static-libasan) was implemented in newer versions of clang
     # For older versions of clang, this patch was not backported, so pass -static-libsan to clang as it recognizes it
     # pass -static-libasan otherwise if gcc is used instead
-    [ -n "$IS_CLANG" ] && STATIC_SAN=-static-libsan || STATIC_SAN=-static-libasan
+    [ -n "$IS_CLANG" ] && STATIC_SAN="-static-libsan" || STATIC_SAN="-static-libasan"
     export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
     export LDFLAGS="$LDFLAGS -fsanitize=address $STATIC_SAN"
   fi
