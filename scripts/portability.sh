@@ -25,7 +25,7 @@ fi
 IS_CLANG=$("$CROSS_COMPILE$CC" --version | grep -w clang)
 
 # Disable pointless warnings only clang produces
-[ -n $IS_CLANG ] &&
+[ -n "$IS_CLANG" ] &&
   CFLAGS+=" -Wno-string-plus-int -Wno-invalid-source-encoding -Wno-incompatible-pointer-types-discards-qualifiers" ||
 # And ones only gcc produces
   CFLAGS+=" -Wno-restrict -Wno-format-overflow -Wno-discarded-qualifiers"
