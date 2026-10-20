@@ -12,10 +12,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: [ macos-15, macos-26 ]
+          # macOS
+          - runner: macos-15
             os: macOS
             build_args: VERBOSE=all make macos_defconfig tests
-          - runner: [ ubuntu-24.04, ubuntu-26.04 ]
+          - runner: macos-26
+            os: macOS
+            build_args: VERBOSE=all make macos_defconfig tests
+          # Ubuntu
+          - runner: ubuntu-24.04
+            os: Ubuntu
+            build_args: VERBOSE=all CC=clang make defconfig tests
+          - runner: ubuntu-24.04
             os: Ubuntu
             build_args: VERBOSE=all CC=clang make defconfig tests
     name: ${{ matrix.os }} (${{ matrix.runner }})
