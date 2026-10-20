@@ -17,7 +17,7 @@ fi
 if [ "$(uname)" == "Darwin" ]
 then
   CFLAGS+=" -Wno-deprecated-declarations"
-  : ${LDOPTIMIZE:=-Wl,-dead_strip} ${STRIP:=strip}
+  : ${LDOPTIMIZE:=-Wl,-dead_strip, -liconv} ${STRIP:=strip}
 else
   : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
