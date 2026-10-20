@@ -38,14 +38,12 @@ if [ -n "$ASAN" ]; then
   if [ "$(uname)" == "Darwin" ]
   then
     export CFLAGS="$CFLAGS $ASAN_FLAGS"
-    export LDFLAGS="$LDFLAGS -fsanitize=address"
   else
     # The patch made to LLVM upstream (i.e aliasing -static-libsan to -static-libasan) was implemented in newer versions of clang
     # For older versions of clang, this patch was not backported, so pass -static-libsan to clang as it recognizes it
     # pass -static-libasan otherwise if gcc is used instead
     STATIC_SAN=$([ -n "$IS_CLANG" ] && echo "static-libsan" || echo "-static-libasan")
     export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
-    export LDFLAGS="$LDFLAGS -fsanitize=address $STATIC_SAN"
   fi
   
   export NOSTRIP=1
