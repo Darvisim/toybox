@@ -29,7 +29,7 @@ jobs:
     - name: Setup
       run: |
         if [[ "${{ runner.os }}" == "macOS" ]]; then
-          brew install gnu-sed bash
+          brew install gnu-sed
         else # Ubuntu
           sudo apt-get install build-essential
         fi
