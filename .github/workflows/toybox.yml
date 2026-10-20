@@ -7,26 +7,32 @@ on:
     branches: [ master ]
 
 jobs:
-  MacOS-13:
-    runs-on: macos-13
-
+  configure-build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS
+          - { runner: macos-15, os: macOS }
+          - { runner: macos-26, os: macOS }
+          # Ubuntu
+          - { runner: ubuntu-24.04, os: Ubuntu }
+          - { runner: ubuntu-26.04, os: Ubuntu }
+    name: ${{ matrix.os }} (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
     - name: Setup
-      run: brew install gnu-sed
-    - name: Configure
-      run: make macos_defconfig
-    - name: Build
-      run: make
-    - name: Test
-      run: VERBOSE=all make tests
-
-  Ubuntu-22_04:
-    runs-on: ubuntu-22.04
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup
-      run: sudo apt-get install build-essential
-    - name: Configure build and test
-      run: VERBOSE=all CC=clang make defconfig tests
+      run: |
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          brew install gnu-sed
+        else # Ubuntu
+          sudo apt-get install build-essential
+        fi
+    - name: Configure, Build and Test
+      run: |
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          VERBOSE=all make macos_defconfig tests
+        else # Ubuntu
+          VERBOSE=all CC=clang make defconfig tests
+        fi
