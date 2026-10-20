@@ -32,7 +32,18 @@ fi
 if [ -n "$ASAN" ]; then
   # Turn ASan on and disable most optimization to get more readable backtraces.
   # (Technically ASAN is just "-fsanitize=address" and the rest is optional.)
-  export CFLAGS="$CFLAGS -fsanitize=address -O1 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls -static-libsan"
+  ASAN_FLAGS="-fsanitize=address -O1 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls"
+
+  # macOS rejects static runtime sanitizers so omit passing -static-libsan or -static-libasan
+  if [ "$(uname)" == "Darwin" ]
+  then
+    export CFLAGS="$CFLAGS $ASAN_FLAGS"
+  else
+    [ -n "$IS_CLANG" ] && echo "STATIC_SAN=-static-libsan" 
+      || echo "STATIC_SAN=-static-libasan" # if gcc is used instead of clang
+    export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
+  fi
+  
   export NOSTRIP=1
   # Ignore leaks on exit. TODO
   export ASAN_OPTIONS="detect_leaks=0"
