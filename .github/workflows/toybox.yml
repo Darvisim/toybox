@@ -23,7 +23,7 @@ jobs:
           - runner: ubuntu-24.04
             os: Ubuntu
             build_args: VERBOSE=all CC=clang make defconfig tests
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             os: Ubuntu
             build_args: VERBOSE=all CC=clang make defconfig tests
     name: ${{ matrix.os }} (${{ matrix.runner }})
