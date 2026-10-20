@@ -17,7 +17,7 @@ fi
 if [ "$(uname)" == "Darwin" ]
 then
   CFLAGS+=" -Wno-deprecated-declarations"
-  : ${LDOPTIMIZE:=-Wl,-dead_strip, -liconv} ${STRIP:=strip}
+  : ${LDOPTIMIZE:=-Wl,-dead_strip,-liconv} ${STRIP:=strip}
 else
   : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
@@ -39,7 +39,7 @@ if [ -n "$ASAN" ]; then
   # Omit passing -static-libsan or -static-libasan for macOS as it rejects static runtime sanitizers
   if [ "$(uname)" == "Darwin" ]
   then
-    export CFLAGS="$CFLAGS $ASAN_FLAGS"
+    export CFLAGS="$CFLAGS $ASAN_FLAGS -shared-libsan"
   else
     # The patch made to LLVM upstream (i.e aliasing -static-libsan to -static-libasan) was implemented in newer versions of clang
     # For older versions of clang, this patch was not backported, so pass -static-libsan to clang as it recognizes it
