@@ -39,8 +39,7 @@ if [ -n "$ASAN" ]; then
   then
     export CFLAGS="$CFLAGS $ASAN_FLAGS"
   else
-    [ -n "$IS_CLANG" ] && echo "STATIC_SAN=-static-libsan" 
-      || echo "STATIC_SAN=-static-libasan" # if gcc is used instead of clang
+    [ -n "$IS_CLANG" ] && echo "STATIC_SAN=-static-libsan" typo|| echo "STATIC_SAN=-static-libasan" # if gcc is used instead of clang
     export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
   fi
   
