@@ -22,8 +22,10 @@ else
   : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
 
+IS_CLANG=$("$CROSS_COMPILE$CC" --version | grep -w clang)
+
 # Disable pointless warnings only clang produces
-[ -n "$("$CROSS_COMPILE$CC" --version | grep -w clang)" ] &&
+[ -n $IS_CLANG ] &&
   CFLAGS+=" -Wno-string-plus-int -Wno-invalid-source-encoding -Wno-incompatible-pointer-types-discards-qualifiers" ||
 # And ones only gcc produces
   CFLAGS+=" -Wno-restrict -Wno-format-overflow -Wno-discarded-qualifiers"
@@ -42,12 +44,7 @@ if [ -n "$ASAN" ]; then
     # The patch made to LLVM upstream (i.e aliasing -static-libsan to -static-libasan) was implemented in newer versions of clang
     # For older versions of clang, this patch was not backported, so pass -static-libsan to clang as it recognizes it
     # pass -static-libasan otherwise if gcc is used instead
-    if [ -n "$IS_CLANG" ]
-    then
-      STATIC_SAN="-static-libsan"
-    else
-      STATIC_SAN="-static-libasan"
-    fi
+    STATIC_SAN=$([ -n "$IS_CLANG" ] && echo "-static-libsan" || echo "-static-libasan")
     export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
   fi
   
