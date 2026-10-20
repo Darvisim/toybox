@@ -15,21 +15,17 @@ jobs:
           # macOS
           - runner: macos-15
             os: macOS
-            build_args: VERBOSE=all make macos_defconfig tests
           - runner: macos-26
             os: macOS
-            build_args: VERBOSE=all make macos_defconfig tests
           # Ubuntu
           - runner: ubuntu-24.04
             os: Ubuntu
-            build_args: VERBOSE=all CC=clang make defconfig tests
           - runner: ubuntu-26.04
             os: Ubuntu
-            build_args: VERBOSE=all CC=clang make defconfig tests
     name: ${{ matrix.os }} (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
     - name: Setup
       run: |
         if [[ "${{ runner.os }}" == "macOS" ]]; then
@@ -38,4 +34,9 @@ jobs:
           sudo apt-get install build-essential
         fi
     - name: Configure, Build and Test
-      run: ${{ matrix.build_args }}
+      run: |
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          VERBOSE=all make macos_defconfig tests
+        else # Ubuntu
+          VERBOSE=all CC=clang make defconfig tests
+        fi
