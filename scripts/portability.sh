@@ -34,13 +34,18 @@ if [ -n "$ASAN" ]; then
   # (Technically ASAN is just "-fsanitize=address" and the rest is optional.)
   ASAN_FLAGS="-fsanitize=address -O1 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls"
 
-  # macOS rejects static runtime sanitizers so omit passing -static-libsan or -static-libasan
+  # Omit passing -static-libsan or -static-libasan for macOS as it rejects static runtime sanitizers
   if [ "$(uname)" == "Darwin" ]
   then
     export CFLAGS="$CFLAGS $ASAN_FLAGS"
+    export LDFLAGS="$LDFLAGS -fsanitize=address"
   else
-    [ -n "$IS_CLANG" ] && echo "STATIC_SAN=-static-libsan" typo|| echo "STATIC_SAN=-static-libasan" # if gcc is used instead of clang
+    # The patch made to LLVM upstream (i.e aliasing -static-libsan to -static-libasan) was implemented in newer versions of clang
+    # For older versions of clang, this patch was not backported, so pass -static-libsan to clang as it recognizes it
+    # pass -static-libasan otherwise if gcc is used instead
+    [ -n "$IS_CLANG" ] && STATIC_SAN=-static-libsan || STATIC_SAN=-static-libasan
     export CFLAGS="$CFLAGS $ASAN_FLAGS $STATIC_SAN"
+    export LDFLAGS="$LDFLAGS -fsanitize=address $STATIC_SAN"
   fi
   
   export NOSTRIP=1
