@@ -221,9 +221,9 @@ txpect()
       # send input to child
       I) printf %s "${1:1}" >&$IN || { do_fail;break;} ;;
 
-      R) LEN=0; B=1; ;&
       # check output from child
-      [OE])
+      R|[OE])
+        [[ ${1::1} == 'R' ]] && { LEN=0; B=1; }
         [ $LEN == 0 ] && LARG="" || LARG="-rN $LEN"
         O=$OUT  A=
         [ "${1:$B:1}" == 'E' ] && O=$ERR
