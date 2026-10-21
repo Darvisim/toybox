@@ -223,7 +223,13 @@ txpect()
 
       # check output from child
       R|[OE])
-        [[ ${1::1} == 'R' ]] && { LEN=0; B=1; }
+        # same as:
+        # R) LEN=0; B=1; ;&
+        # [OE]) 
+        #    ...
+        # but a safer implementation for older bash that doesn't understand the fallback operator (;&)
+        [ "${1:0:1}" == 'R' ] && { LEN=0; B=1; }
+        
         [ $LEN == 0 ] && LARG="" || LARG="-rN $LEN"
         O=$OUT  A=
         [ "${1:$B:1}" == 'E' ] && O=$ERR
