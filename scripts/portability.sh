@@ -19,7 +19,9 @@ then
   CFLAGS+=" -Wno-deprecated-declarations"
   : ${LDOPTIMIZE:=-Wl,-dead_strip,-liconv} ${STRIP:=strip}
 else
-  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
+  # Ubuntu 22.04 segfaults because libcrypt is discarded by ASAN
+  # Pass it to the linker so functions needing crypt() no longer crash on a missing function
+  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,-lcrypt -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
 
 IS_CLANG=$("$CROSS_COMPILE$CC" --version | grep -w clang)
