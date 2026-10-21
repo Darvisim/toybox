@@ -20,7 +20,7 @@ then
   : ${LDOPTIMIZE:=-Wl,-dead_strip,-liconv} ${STRIP:=strip}
 else
   # Ubuntu 22.04 segfaults because libcrypt is discarded by the ASAN, so pass it to linker and have it resolved
-  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--no-as-needed -lcrypt -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
+  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,-lcrypt -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
 
 IS_CLANG=$("$CROSS_COMPILE$CC" --version | grep -w clang)
