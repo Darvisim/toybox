@@ -19,7 +19,7 @@ then
   CFLAGS+=" -Wno-deprecated-declarations"
   : ${LDOPTIMIZE:=-Wl,-dead_strip,-liconv} ${STRIP:=strip}
 else
-  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--as-needed} ${STRIP:=strip -s -R .note* -R .comment}
+  : ${LDOPTIMIZE:=-Wl,--gc-sections -Wl,--no-as-needed} ${STRIP:=strip -s -R .note* -R .comment}
 fi
 
 IS_CLANG=$("$CROSS_COMPILE$CC" --version | grep -w clang)
