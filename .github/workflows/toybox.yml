@@ -46,6 +46,5 @@ jobs:
           -ex 'bt full' \
           -ex 'info sharedlibrary' \
           --args generated/testdir/mkpasswd -P0 -mmd5 -S abcdefgh
+        ldd generated/testdir/mkpasswd
         readelf -d generated/testdir/mkpasswd | grep NEEDED
-        readelf -Ws generated/testdir/mkpasswd | grep crypt
-        ldd generated/testdir/mkpasswd | grep crypt
