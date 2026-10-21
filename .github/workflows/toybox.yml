@@ -34,3 +34,15 @@ jobs:
       run: sudo apt-get install build-essential
     - name: Configure, Build and Test
       run: VERBOSE=all CC=clang make defconfig tests
+    - name: Capture mkpasswd backtrace
+      if: failure() && matrix.os == 'ubuntu-22.04'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gdb
+        printf 'password\n' > /tmp/mkpasswd.input
+        gdb --batch \
+          -ex 'set pagination off' \
+          -ex 'run < /tmp/mkpasswd.input' \
+          -ex 'bt full' \
+          -ex 'info sharedlibrary' \
+          --args generated/testdir/mkpasswd -P0 -mmd5 -S abcdefgh
