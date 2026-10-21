@@ -8,32 +8,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  configure-build-test:
+  macos:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # macOS
-          - { runner: macos-15, os: macOS }
-          - { runner: macos-26, os: macOS }
-          # Ubuntu
-          - { runner: ubuntu-24.04, os: Ubuntu }
-          - { runner: ubuntu-26.04, os: Ubuntu }
-    name: ${{ matrix.os }} (${{ matrix.runner }})
-    runs-on: ${{ matrix.runner }}
+        os: [ macos-15, macos-26, xcode-27 ]
+    name: macOS (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v6
     - name: Setup
-      run: |
-        if [[ "${{ runner.os }}" == "macOS" ]]; then
-          brew install gnu-sed
-        else # Ubuntu
-          sudo apt-get install build-essential
-        fi
+      run: brew install gnu-sed
     - name: Configure, Build and Test
-      run: |
-        if [[ "${{ runner.os }}" == "macOS" ]]; then
-          VERBOSE=all make macos_defconfig tests
-        else # Ubuntu
-          VERBOSE=all CC=clang make defconfig tests
-        fi
+      run: VERBOSE=all make macos_defconfig tests
+        
+  ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+          os: [ ubuntu-22.04, ubuntu-24.04, ubuntu-26.04 ]
+    name: Ubuntu (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup
+      run: sudo apt-get install build-essential
+    - name: Configure, Build and Test
+      run: VERBOSE=all CC=clang make defconfig tests
