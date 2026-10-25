@@ -57,8 +57,9 @@ LIBRARIES=$(
   for i in util crypt m resolv selinux smack attr crypto z log iconv tls ssl
   do
     do_loudly ${CROSS_COMPILE}${CC} $CFLAGS $LDFLAGS -xc - -l$i >>$X 2>&1 \
-      -o /dev/null <<<"int main(int argc,char*argv[]){return 0;}" &&
-      echo -l$i &
+      -o "$GENDIR"/temp.o <<<"int main(int argc,char*argv[]){return 0;}" &&
+      echo -l$i
+    rm -f "$GENDIR"/temp.o
   done | sort | xargs
 )
 # Actually resolve dangling dependencies in extra libraries when static linking
@@ -252,7 +253,7 @@ if [ -n "$NOSTRIP" ] ||
 then
   [ -z "$NOSTRIP" ] && echo "strip failed, using unstripped"
   rm -f "$OUTNAME" &&
-  cp "$UNSTRIPPED" "$OUTNAME" || exit 1
+  ln -f "$UNSTRIPPED" "$OUTNAME" || exit 1
 fi
 
 # Remove write bit set so buggy installs (like bzip's) don't overwrite the
